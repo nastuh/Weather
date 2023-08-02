@@ -13,14 +13,16 @@ def start(message):
 
 
 
-@bot.message_handler(content_types=['start'])
+@bot.message_handler(content_types=['text'])
 def get_weather(message):
     city = message.text.strip().lower()
     res = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API}&units=metric')
     data = json.loads(res.text)
-    bot.reply_to(message,f'На данный момент погода в выбранном месте составляет: - At the moment, the weather in the selected location is: {data["main"]["temperature"]["temp"]}')
+    temp = data["main"]["temp"]
+    bot.reply_to(message,f'На данный момент погода в выбранном месте составляет: - At the moment, the weather in the selected location is: {temp}')
 
-
-
+    image = 'sun.png' if temp > 10.0 else 'bubbles.png'
+    file = open('./' + image, 'rb')
+    bot.send_photo(message.chat.id, file)
 
 bot.polling(none_stop=True)
